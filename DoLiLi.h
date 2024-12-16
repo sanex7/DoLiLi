@@ -90,6 +90,110 @@ public:
         }
         cout << endl;
     }
+
+    void InsertAtPosition(T value, int position) {
+        if (position < 0) return;
+
+        Node* newNode = new Node(value);
+        if (position == 0) {
+            AddToHead(value);
+            return;
+        }
+
+        Node* current = head;
+        for (int i = 0; i < position - 1 && current; ++i) {
+            current = current->next;
+        }
+
+        if (!current) {
+            AddToTail(value);
+        }
+        else {
+            newNode->next = current->next;
+            newNode->prev = current;
+            if (current->next) {
+                current->next->prev = newNode;
+            }
+            else {
+                tail = newNode;
+            }
+            current->next = newNode;
+        }
+    }
+
+    void DeleteAtPosition(int position) {
+        if (position < 0 || !head) return;
+
+        if (position == 0) {
+            DeleteFromHead();
+            return;
+        }
+
+        Node* current = head;
+        for (int i = 0; i < position && current; ++i) {
+            current = current->next;
+        }
+
+        if (!current) return;
+
+        if (current->prev) {
+            current->prev->next = current->next;
+        }
+        if (current->next) {
+            current->next->prev = current->prev;
+        }
+        else {
+            tail = current->prev;
+        }
+
+        delete current;
+    }
+
+    int Find(T value) const {
+        Node* current = head;
+        int position = 0;
+
+        while (current) {
+            if (current->data == value) {
+                return position;
+            }
+            current = current->next;
+            ++position;
+        }
+
+        return -1;
+    }
+
+    int FindAndReplace(T oldValue, T newValue) {
+        Node* current = head;
+        int replaceCount = 0;
+
+        while (current) {
+            if (current->data == oldValue) {
+                current->data = newValue;
+                ++replaceCount;
+            }
+            current = current->next;
+        }
+
+        return replaceCount > 0 ? replaceCount : -1;
+    }
+
+    void Reverse() {
+        Node* current = head;
+        Node* temp = nullptr;
+
+        while (current) {
+            temp = current->prev;
+            current->prev = current->next;
+            current->next = temp;
+            current = current->prev;
+        }
+
+        if (temp) {
+            head = temp->prev;
+        }
+    }
 };
 
 #endif
